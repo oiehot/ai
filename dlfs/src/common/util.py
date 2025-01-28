@@ -74,3 +74,16 @@ def most_similar(query, word_to_id, id_to_word, word_matrix, top=5):
         count += 1
         if count >= top:
             return
+
+
+def ppmi(C, eps=1e-8):
+    M = np.zeros_like(C, dtype=np.float32) # 결과 값
+    N = np.sum(C) # 동시발생행렬의 모든 셀 값을 합산 ex) 14
+    S = np.sum(C, axis=0) # 동시발생행렬의 행별로 값을 모두 합산 ex) [1 4 2 2 2 2 1]
+    for i in range(C.shape[0]):
+        for j in range(C.shape[1]):
+            # C[i,j]: 동시발생 횟수
+            # S[j], S[i]: 개별발생 횟수
+            pmi = np.log2(C[i, j]*N / (S[j]*S[i])+eps)
+            M[i, j] = max(0, pmi) # PPMI
+    return M
